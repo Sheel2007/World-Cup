@@ -138,10 +138,10 @@ flowchart TD
     E --> F["QAOA<br/>Quantum Approximate Optimisation Algorithm"]
     F --> G["Full simulated tournament<br/>Groups · R32 · R16 · QF · SF · Final"]
 
-    style D fill:#e3d4f5,stroke:#6929C4
-    style F fill:#e3d4f5,stroke:#6929C4
-    style C fill:#fde2d4,stroke:#EB6E2D
-    style G fill:#d4edda,stroke:#155724
+    style D fill:#6929C4,stroke:#4B1A8C,color:#ffffff
+    style F fill:#6929C4,stroke:#4B1A8C,color:#ffffff
+    style C fill:#EB6E2D,stroke:#A84A14,color:#ffffff
+    style G fill:#1F7A3E,stroke:#0F4A22,color:#ffffff
 ```
 
 ### What each piece does, in plain English
