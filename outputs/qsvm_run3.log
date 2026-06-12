@@ -1,0 +1,69 @@
+State replayed through 2026-06-01 — 284 teams known
+
+=== GROUP STAGE ===
+  Group A: Mexico(4.5), South Korea(4.0), Czech Republic(3.8), South Africa(3.5)
+  Group B: Canada(4.4), Switzerland(4.1), Qatar(4.0), Bosnia and Herzegovina(3.5)
+  Group C: Brazil(4.3), Morocco(4.0), Haiti(3.7), Scotland(3.7)
+  Group D: Turkey(4.2), United States(4.0), Paraguay(3.7), Australia(3.7)
+  Group E: Germany(4.3), Ivory Coast(4.0), Curaçao(3.9), Ecuador(3.8)
+  Group F: Netherlands(4.7), Tunisia(4.0), Japan(3.7), Sweden(3.6)
+  Group G: Belgium(4.6), Iran(4.1), Egypt(3.8), New Zealand(3.4)
+  Group H: Spain(4.2), Saudi Arabia(4.1), Uruguay(4.0), Cape Verde(3.8)
+  Group I: France(4.3), Norway(4.0), Senegal(3.8), Iraq(3.7)
+  Group J: Algeria(4.3), Argentina(4.1), Austria(4.1), Jordan(3.6)
+  Group K: Portugal(4.5), DR Congo(4.0), Colombia(3.8), Uzbekistan(3.6)
+  Group L: Croatia(4.6), England(4.4), Panama(3.7), Ghana(3.6)
+
+Qualified: 32 teams advance to round of 32
+
+Bracket seeding: ['Mexico', 'Egypt', 'Canada', 'Czech Republic', 'Brazil', 'Colombia', 'Turkey', 'Senegal'] ...
+
+=== Round of 32 (32 teams) ===
+  Mexico vs Egypt
+  Canada vs Czech Republic
+  Brazil vs Colombia
+  Turkey vs Senegal
+  Germany vs Curaçao
+  Netherlands vs Uruguay
+  Belgium vs Qatar
+  Spain vs Austria
+  France vs England
+  Algeria vs DR Congo
+  Portugal vs Argentina
+  Croatia vs Norway
+  South Korea vs Saudi Arabia
+  Switzerland vs Iran
+  Morocco vs Tunisia
+  United States vs Ivory Coast
+  → winners: ['Egypt', 'Canada', 'Brazil', 'Turkey', 'Germany', 'Netherlands', 'Belgium', 'Austria', 'England', 'Algeria', 'Argentina', 'Norway', 'South Korea', 'Iran', 'Morocco', 'United States']
+
+=== Round of 16 (16 teams) ===
+  Egypt vs Canada
+  Brazil vs Turkey
+  Germany vs Netherlands
+  Belgium vs Austria
+  England vs Algeria
+  Argentina vs Norway
+  South Korea vs Iran
+  Morocco vs United States
+  → winners: ['Canada', 'Brazil', 'Netherlands', 'Austria', 'England', 'Argentina', 'South Korea', 'Morocco']
+
+=== Quarter-finals (8 teams) ===
+  Canada vs Brazil
+  Netherlands vs Austria
+  England vs Argentina
+  South Korea vs Morocco
+  → winners: ['Brazil', 'Austria', 'England', 'Morocco']
+
+=== Semi-finals (4 teams) ===
+  Brazil vs Austria
+  England vs Morocco
+  → winners: ['Brazil', 'England']
+
+=== Final (2 teams) ===
+  Brazil vs England
+  → winners: ['England']
+
+*** PREDICTED CHAMPION: England ***
+Saved JSON → outputs/prediction_qsvm.json
+Saved bracket → /Users/sheelshah/Downloads/World Cup/outputs/bracket_qsvm.png

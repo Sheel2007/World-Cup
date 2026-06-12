@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+.env
+db/*.sqlite
+db/*.db
+outputs/*.png
+outputs/*.json
+*.joblib
+.DS_Store
+.idea/
+.vscode/
+.claude/

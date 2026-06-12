@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Quantum World Cup Predictor — 2026</title>
+<style>
+  :root {
+    --bg: #f6f7fb;
+    --panel: #ffffff;
+    --ink: #1f2937;
+    --muted: #64748b;
+    --line: #e2e8f0;
+    --accent: #1e40af;
+    --winner: #d1fae5;
+    --winner-edge: #047857;
+    --third: #fef3c7;
+    --third-edge: #b45309;
+    --runner: #e0f2fe;
+    --runner-edge: #0369a1;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Helvetica, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+  }
+  header {
+    background: linear-gradient(120deg, #1e3a8a 0%, #4c1d95 100%);
+    color: white;
+    padding: 24px 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+  h1 { margin: 0 0 4px 0; font-size: 22px; font-weight: 700; letter-spacing: -0.01em; }
+  header .sub { font-size: 13px; opacity: 0.85; }
+  .tabs {
+    display: flex;
+    gap: 8px;
+    padding: 16px 32px 0 32px;
+    background: var(--bg);
+    border-bottom: 1px solid var(--line);
+  }
+  .tab {
+    padding: 10px 20px;
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-bottom: none;
+    border-radius: 8px 8px 0 0;
+    cursor: pointer;
+    font-weight: 600;
+    color: var(--muted);
+  }
+  .tab.active { color: var(--accent); border-color: var(--accent); border-bottom: 2px solid var(--panel); margin-bottom: -1px; }
+  main { padding: 24px 32px 64px 32px; }
+  .champion-banner {
+    background: white;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    border-left: 5px solid var(--accent);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+  .champion-banner .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.08em; }
+  .champion-banner .champ { font-size: 28px; font-weight: 800; color: var(--accent); }
+  .champion-banner .meta { font-size: 12px; color: var(--muted); }
+  section { margin-bottom: 32px; }
+  section h2 { font-size: 16px; margin: 0 0 12px 0; color: var(--ink); }
+  section h2 .count { font-weight: 400; color: var(--muted); font-size: 13px; margin-left: 8px; }
+
+  .groups-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .group-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .group-card h3 { margin: 0 0 8px 0; font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+  .group-card table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .group-card th, .group-card td { text-align: left; padding: 4px 6px; }
+  .group-card th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; border-bottom: 1px solid var(--line); }
+  .group-card td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .group-card tr.seed-1 td { background: var(--winner); }
+  .group-card tr.seed-2 td { background: var(--runner); }
+  .group-card tr.seed-3 td { background: var(--third); }
+  .group-card tr.seed-1 td:first-child { border-left: 3px solid var(--winner-edge); }
+  .group-card tr.seed-2 td:first-child { border-left: 3px solid var(--runner-edge); }
+  .group-card tr.seed-3 td:first-child { border-left: 3px solid var(--third-edge); }
+  .legend { display: flex; gap: 12px; font-size: 12px; color: var(--muted); margin: 8px 0 16px 0; flex-wrap: wrap; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+  .thirds-card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .thirds-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+  .thirds-grid .chip {
+    background: var(--third);
+    border: 1px solid var(--third-edge);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    justify-content: space-between;
+  }
+  .thirds-grid .chip span.g { color: var(--third-edge); font-weight: 500; font-size: 11px; }
+
+  .bracket {
+    display: flex;
+    gap: 18px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+  .round-col {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    min-width: 220px;
+  }
+  .round-col h3 { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; margin: 0 0 12px 0; text-align: center; }
+  .match {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    margin: 6px 0;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+  }
+  .match-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .match-row + .match-row { border-top: 1px solid var(--line); }
+  .match-row.winner { background: var(--winner); font-weight: 700; }
+  .match-row .prob { color: var(--winner-edge); font-variant-numeric: tabular-nums; font-size: 12px; }
+  .match-label { font-size: 10px; color: var(--muted); padding: 2px 10px 0 10px; font-weight: 500; }
+
+  .matches-detail {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 12px;
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--muted);
+    max-height: 220px;
+    overflow-y: auto;
+  }
+  .matches-detail summary { cursor: pointer; font-weight: 600; color: var(--ink); }
+  .matches-detail table { width: 100%; border-collapse: collapse; margin-top: 6px; }
+  .matches-detail td { padding: 2px 6px; }
+
+  footer { padding: 24px 32px; color: var(--muted); font-size: 12px; border-top: 1px solid var(--line); background: var(--panel); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Quantum World Cup Predictor — 2026</h1>
+  <div class="sub">QSVM match probabilities · QAOA bracket optimisation · XGBoost classical baseline</div>
+</header>
+
+<div class="tabs">
+  <div class="tab active" data-model="xgb">XGBoost + QAOA</div>
+  <div class="tab" data-model="qsvm">QSVM + QAOA</div>
+</div>
+
+<main>
+  <div class="champion-banner">
+    <div>
+      <div class="label">Predicted champion</div>
+      <div class="champ" id="champ">—</div>
+    </div>
+    <div class="meta" id="meta">—</div>
+  </div>
+
+  <section>
+    <h2>Group stage <span class="count" id="groups-count"></span></h2>
+    <div class="legend">
+      <span><i style="background: var(--winner); border: 1px solid var(--winner-edge)"></i>1st (auto-qualify)</span>
+      <span><i style="background: var(--runner); border: 1px solid var(--runner-edge)"></i>2nd (auto-qualify)</span>
+      <span><i style="background: var(--third); border: 1px solid var(--third-edge)"></i>3rd (8 best advance)</span>
+    </div>
+    <div class="groups-grid" id="groups"></div>
+  </section>
+
+  <section>
+    <h2>Best third-place qualifiers <span class="count">Top 8 of 12 third-placed teams</span></h2>
+    <div class="thirds-card"><div class="thirds-grid" id="thirds"></div></div>
+  </section>
+
+  <section>
+    <h2>Knockout bracket <span class="count">R32 → R16 → QF → SF → Final</span></h2>
+    <div class="bracket" id="bracket"></div>
+  </section>
+</main>
+
+<footer>
+  Built from <code>outputs/prediction_xgb.json</code> + <code>outputs/prediction_qsvm.json</code>.
+  Group standings, qualifiers and knockout outcomes all driven by the selected model;
+  knockout rounds additionally optimised with QAOA on a Qiskit Aer simulator.
+</footer>
+
+<script>
+const DATA = {"xgb": {"model": "xgb", "champion": "Spain", "rounds": [{"round": "Round of 32", "winners": ["Germany", "France", "South Korea", "Brazil", "Portugal", "Spain", "Australia", "Iran", "Japan", "Ecuador", "Mexico", "England", "Argentina", "Egypt", "Switzerland", "Colombia"], "matches": [{"round": "Round of 32", "team_a": "Germany", "team_b": "Turkey", "p_a": 0.5610083341598511, "p_b": 0.4389916658401489, "winner": "Germany", "p_winner": 0.5610083341598511, "match_no": 74}, {"round": "Round of 32", "team_a": "France", "team_b": "Belgium", "p_a": 0.6563781499862671, "p_b": 0.3436218202114105, "winner": "France", "p_winner": 0.6563781499862671, "match_no": 77}, {"round": "Round of 32", "team_a": "South Korea", "team_b": "Canada", "p_a": 0.5419538021087646, "p_b": 0.45804622769355774, "winner": "South Korea", "p_winner": 0.5419538021087646, "match_no": 73}, {"round": "Round of 32", "team_a": "Netherlands", "team_b": "Brazil", "p_a": 0.4754197895526886, "p_b": 0.524580180644989, "winner": "Brazil", "p_winner": 0.524580180644989, "match_no": 75}, {"round": "Round of 32", "team_a": "Portugal", "team_b": "Croatia", "p_a": 0.7138673663139343, "p_b": 0.2861326336860657, "winner": "Portugal", "p_winner": 0.7138673663139343, "match_no": 83}, {"round": "Round of 32", "team_a": "Spain", "team_b": "Algeria", "p_a": 0.783580482006073, "p_b": 0.2164195030927658, "winner": "Spain", "p_winner": 0.783580482006073, "match_no": 84}, {"round": "Round of 32", "team_a": "Australia", "team_b": "Austria", "p_a": 0.6131411790847778, "p_b": 0.38685882091522217, "winner": "Australia", "p_winner": 0.6131411790847778, "match_no": 81}, {"round": "Round of 32", "team_a": "Iran", "team_b": "Norway", "p_a": 0.645523190498352, "p_b": 0.35447680950164795, "winner": "Iran", "p_winner": 0.645523190498352, "match_no": 82}, {"round": "Round of 32", "team_a": "Morocco", "team_b": "Japan", "p_a": 0.5018777251243591, "p_b": 0.49812233448028564, "winner": "Japan", "p_winner": 0.49812233448028564, "match_no": 76}, {"round": "Round of 32", "team_a": "Ecuador", "team_b": "Senegal", "p_a": 0.5875086188316345, "p_b": 0.41249141097068787, "winner": "Ecuador", "p_winner": 0.5875086188316345, "match_no": 78}, {"round": "Round of 32", "team_a": "Mexico", "team_b": "Ivory Coast", "p_a": 0.6050270795822144, "p_b": 0.39497292041778564, "winner": "Mexico", "p_winner": 0.6050270795822144, "match_no": 79}, {"round": "Round of 32", "team_a": "England", "team_b": "Uzbekistan", "p_a": 0.5369407534599304, "p_b": 0.4630592465400696, "winner": "England", "p_winner": 0.5369407534599304, "match_no": 80}, {"round": "Round of 32", "team_a": "Argentina", "team_b": "Uruguay", "p_a": 0.6654806137084961, "p_b": 0.3345193862915039, "winner": "Argentina", "p_winner": 0.6654806137084961, "match_no": 86}, {"round": "Round of 32", "team_a": "United States", "team_b": "Egypt", "p_a": 0.4088697135448456, "p_b": 0.5911303162574768, "winner": "Egypt", "p_winner": 0.5911303162574768, "match_no": 88}, {"round": "Round of 32", "team_a": "Switzerland", "team_b": "Tunisia", "p_a": 0.7245725393295288, "p_b": 0.2754274606704712, "winner": "Switzerland", "p_winner": 0.7245725393295288, "match_no": 85}, {"round": "Round of 32", "team_a": "Colombia", "team_b": "Panama", "p_a": 0.8112805485725403, "p_b": 0.18871942162513733, "winner": "Colombia", "p_winner": 0.8112805485725403, "match_no": 87}], "qaoa_objective": 7.606965871629589}, {"round": "Round of 16", "winners": ["France", "Brazil", "Spain", "Iran", "Ecuador", "Mexico", "Argentina", "Colombia"], "matches": [{"round": "Round of 16", "team_a": "Germany", "team_b": "France", "p_a": 0.22328057885169983, "p_b": 0.7767193913459778, "winner": "France", "p_winner": 0.7767193913459778, "match_no": 89}, {"round": "Round of 16", "team_a": "South Korea", "team_b": "Brazil", "p_a": 0.4161435067653656, "p_b": 0.583856463432312, "winner": "Brazil", "p_winner": 0.583856463432312, "match_no": 90}, {"round": "Round of 16", "team_a": "Portugal", "team_b": "Spain", "p_a": 0.2274814248085022, "p_b": 0.772518515586853, "winner": "Spain", "p_winner": 0.772518515586853, "match_no": 93}, {"round": "Round of 16", "team_a": "Australia", "team_b": "Iran", "p_a": 0.39934366941452026, "p_b": 0.6006563305854797, "winner": "Iran", "p_winner": 0.6006563305854797, "match_no": 94}, {"round": "Round of 16", "team_a": "Japan", "team_b": "Ecuador", "p_a": 0.4916999638080597, "p_b": 0.5083000659942627, "winner": "Ecuador", "p_winner": 0.5083000659942627, "match_no": 91}, {"round": "Round of 16", "team_a": "Mexico", "team_b": "England", "p_a": 0.548346757888794, "p_b": 0.45165324211120605, "winner": "Mexico", "p_winner": 0.548346757888794, "match_no": 92}, {"round": "Round of 16", "team_a": "Argentina", "team_b": "Egypt", "p_a": 0.6396056413650513, "p_b": 0.3603943884372711, "winner": "Argentina", "p_winner": 0.6396056413650513, "match_no": 95}, {"round": "Round of 16", "team_a": "Switzerland", "team_b": "Colombia", "p_a": 0.31169363856315613, "p_b": 0.6883063912391663, "winner": "Colombia", "p_winner": 0.6883063912391663, "match_no": 96}], "qaoa_objective": 3.6565633140795386}, {"round": "Quarter-finals", "winners": ["France", "Spain", "Ecuador", "Argentina"], "matches": [{"round": "Quarter-finals", "team_a": "France", "team_b": "Brazil", "p_a": 0.7522643208503723, "p_b": 0.24773573875427246, "winner": "France", "p_winner": 0.7522643208503723, "match_no": 97}, {"round": "Quarter-finals", "team_a": "Spain", "team_b": "Iran", "p_a": 0.7064293622970581, "p_b": 0.2935706079006195, "winner": "Spain", "p_winner": 0.7064293622970581, "match_no": 98}, {"round": "Quarter-finals", "team_a": "Ecuador", "team_b": "Mexico", "p_a": 0.5668656229972839, "p_b": 0.43313443660736084, "winner": "Ecuador", "p_winner": 0.5668656229972839, "match_no": 99}, {"round": "Quarter-finals", "team_a": "Argentina", "team_b": "Colombia", "p_a": 0.5890016555786133, "p_b": 0.41099831461906433, "winner": "Argentina", "p_winner": 0.5890016555786133, "match_no": 100}], "qaoa_objective": 1.754158875073517}, {"round": "Semi-finals", "winners": ["Spain", "Argentina"], "matches": [{"round": "Semi-finals", "team_a": "France", "team_b": "Spain", "p_a": 0.37820178270339966, "p_b": 0.6217982769012451, "winner": "Spain", "p_winner": 0.6217982769012451, "match_no": 101}, {"round": "Semi-finals", "team_a": "Ecuador", "team_b": "Argentina", "p_a": 0.45042693614959717, "p_b": 0.5495730638504028, "winner": "Argentina", "p_winner": 0.5495730638504028, "match_no": 102}], "qaoa_objective": 1.0862531022440707}, {"round": "Final", "winners": ["Spain"], "matches": [{"round": "Final", "team_a": "Spain", "team_b": "Argentina", "p_a": 0.8058958649635315, "p_b": 0.19410410523414612, "winner": "Spain", "p_winner": 0.8058958649635315, "match_no": 104}], "qaoa_objective": 0.21580074461962884}], "qualified": [["Mexico", "A", 1], ["South Korea", "A", 2], ["Switzerland", "B", 1], ["Canada", "B", 2], ["Morocco", "C", 1], ["Brazil", "C", 2], ["Australia", "D", 1], ["United States", "D", 2], ["Germany", "E", 1], ["Ecuador", "E", 2], ["Netherlands", "F", 1], ["Japan", "F", 2], ["Iran", "G", 1], ["Egypt", "G", 2], ["Spain", "H", 1], ["Uruguay", "H", 2], ["France", "I", 1], ["Senegal", "I", 2], ["Argentina", "J", 1], ["Algeria", "J", 2], ["Colombia", "K", 1], ["Portugal", "K", 2], ["England", "L", 1], ["Croatia", "L", 2], ["Belgium", "G", 3], ["Ivory Coast", "E", 3], ["Turkey", "D", 3], ["Uzbekistan", "K", 3], ["Panama", "L", 3], ["Austria", "J", 3], ["Norway", "I", 3], ["Tunisia", "F", 3]], "groups": {"A": {"group": "A", "teams": ["Mexico", "South Africa", "South Korea", "Czech Republic"], "standings": ["Mexico", "South Korea", "Czech Republic", "South Africa"], "points": {"Mexico": 6.151, "South Africa": 2.235, "South Korea": 5.231, "Czech Republic": 2.557}, "gf": {"Mexico": 2.86, "South Africa": 2.395, "South Korea": 4.014, "Czech Republic": 3.174}, "ga": {"Mexico": 2.829, "South Africa": 3.637, "South Korea": 2.648, "Czech Republic": 3.328}, "matches": [{"home": "Mexico", "away": "South Africa", "neutral": 0, "p_home": 0.7006466388702393, "p_draw": 0.22904227674007416, "p_away": 0.07031108438968658}, {"home": "Mexico", "away": "South Korea", "neutral": 0, "p_home": 0.5054395198822021, "p_draw": 0.31310349702835083, "p_away": 0.18145695328712463}, {"home": "Mexico", "away": "Czech Republic", "neutral": 0, "p_home": 0.5601745247840881, "p_draw": 0.31011486053466797, "p_away": 0.1297105848789215}, {"home": "South Africa", "away": "South Korea", "neutral": 1, "p_home": 0.10282392799854279, "p_draw": 0.30526527762413025, "p_away": 0.5919107794761658}, {"home": "South Africa", "away": "Czech Republic", "neutral": 1, "p_home": 0.2486432045698166, "p_draw": 0.4355193078517914, "p_away": 0.31583747267723083}, {"home": "South Korea", "away": "Czech Republic", "neutral": 1, "p_home": 0.6865514516830444, "p_draw": 0.23280011117458344, "p_away": 0.08064845204353333}]}, "B": {"group": "B", "teams": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"], "standings": ["Switzerland", "Canada", "Qatar", "Bosnia and Herzegovina"], "points": {"Canada": 6.383, "Bosnia and Herzegovina": 1.556, "Qatar": 2.337, "Switzerland": 6.569}, "gf": {"Canada": 2.701, "Bosnia and Herzegovina": 3.329, "Qatar": 1.61, "Switzerland": 6.284}, "ga": {"Canada": 3.194, "Bosnia and Herzegovina": 3.911, "Qatar": 4.521, "Switzerland": 2.298}, "matches": [{"home": "Canada", "away": "Bosnia and Herzegovina", "neutral": 0, "p_home": 0.834098756313324, "p_draw": 0.13867376744747162, "p_away": 0.027227459475398064}, {"home": "Canada", "away": "Qatar", "neutral": 0, "p_home": 0.7085312008857727, "p_draw": 0.22963766753673553, "p_away": 0.06183111295104027}, {"home": "Canada", "away": "Switzerland", "neutral": 0, "p_home": 0.36880648136138916, "p_draw": 0.2799331247806549, "p_away": 0.35126036405563354}, {"home": "Bosnia and Herzegovina", "away": "Qatar", "neutral": 1, "p_home": 0.2235942929983139, "p_draw": 0.29927709698677063, "p_away": 0.47712865471839905}, {"home": "Bosnia and Herzegovina", "away": "Switzerland", "neutral": 1, "p_home": 0.07779280096292496, "p_draw": 0.13220000267028809, "p_away": 0.7900072336196899}, {"home": "Qatar", "away": "Switzerland", "neutral": 1, "p_home": 0.038299426436424255, "p_draw": 0.0758407711982727, "p_away": 0.8858598470687866}]}, "C": {"group": "C", "teams": ["Brazil", "Morocco", "Haiti", "Scotland"], "standings": ["Morocco", "Brazil", "Scotland", "Haiti"], "points": {"Brazil": 5.701, "Morocco": 6.722, "Haiti": 2.275, "Scotland": 2.348}, "gf": {"Brazil": 5.61, "Morocco": 5.103, "Haiti": 2.155, "Scotland": 3.861}, "ga": {"Brazil": 3.268, "Morocco": 3.361, "Haiti": 5.306, "Scotland": 4.794}, "matches": [{"home": "Brazil", "away": "Morocco", "neutral": 1, "p_home": 0.21878468990325928, "p_draw": 0.3449670672416687, "p_away": 0.43624821305274963}, {"home": "Brazil", "away": "Haiti", "neutral": 1, "p_home": 0.653195858001709, "p_draw": 0.25308462977409363, "p_away": 0.09371952712535858}, {"home": "Brazil", "away": "Scotland", "neutral": 1, "p_home": 0.8030984401702881, "p_draw": 0.07770708948373795, "p_away": 0.11919450014829636}, {"home": "Morocco", "away": "Haiti", "neutral": 1, "p_home": 0.8953531980514526, "p_draw": 0.03945384547114372, "p_away": 0.06519295275211334}, {"home": "Morocco", "away": "Scotland", "neutral": 1, "p_home": 0.7709116339683533, "p_draw": 0.029559995979070663, "p_away": 0.19952833652496338}, {"home": "Haiti", "away": "Scotland", "neutral": 1, "p_home": 0.4320460557937622, "p_draw": 0.2094068080186844, "p_away": 0.3585471212863922}]}, "D": {"group": "D", "teams": ["United States", "Paraguay", "Australia", "Turkey"], "standings": ["Australia", "United States", "Turkey", "Paraguay"], "points": {"United States": 4.214, "Paraguay": 2.273, "Australia": 5.161, "Turkey": 4.002}, "gf": {"United States": 3.625, "Paraguay": 1.696, "Australia": 3.042, "Turkey": 4.469}, "ga": {"United States": 3.027, "Paraguay": 4.097, "Australia": 3.024, "Turkey": 2.683}, "matches": [{"home": "United States", "away": "Paraguay", "neutral": 0, "p_home": 0.4845295548439026, "p_draw": 0.3417210280895233, "p_away": 0.1737493872642517}, {"home": "United States", "away": "Australia", "neutral": 0, "p_home": 0.22475677728652954, "p_draw": 0.3802154064178467, "p_away": 0.3950277864933014}, {"home": "United States", "away": "Turkey", "neutral": 0, "p_home": 0.3183625638484955, "p_draw": 0.4091384708881378, "p_away": 0.2724989354610443}, {"home": "Paraguay", "away": "Australia", "neutral": 1, "p_home": 0.12091085314750671, "p_draw": 0.2831993103027344, "p_away": 0.5958898067474365}, {"home": "Paraguay", "away": "Turkey", "neutral": 1, "p_home": 0.09647788107395172, "p_draw": 0.4743635356426239, "p_away": 0.4291585385799408}, {"home": "Australia", "away": "Turkey", "neutral": 1, "p_home": 0.3543819487094879, "p_draw": 0.46159014105796814, "p_away": 0.18402792513370514}]}, "E": {"group": "E", "teams": ["Germany", "Cura\u00e7ao", "Ivory Coast", "Ecuador"], "standings": ["Germany", "Ecuador", "Ivory Coast", "Cura\u00e7ao"], "points": {"Germany": 5.279, "Cura\u00e7ao": 1.545, "Ivory Coast": 4.125, "Ecuador": 5.1}, "gf": {"Germany": 5.764, "Cura\u00e7ao": 2.6, "Ivory Coast": 4.042, "Ecuador": 1.946}, "ga": {"Germany": 2.68, "Cura\u00e7ao": 4.51, "Ivory Coast": 3.461, "Ecuador": 3.701}, "matches": [{"home": "Germany", "away": "Cura\u00e7ao", "neutral": 1, "p_home": 0.6895315051078796, "p_draw": 0.2216201275587082, "p_away": 0.08884833008050919}, {"home": "Germany", "away": "Ivory Coast", "neutral": 1, "p_home": 0.5241500735282898, "p_draw": 0.2313784807920456, "p_away": 0.24447140097618103}, {"home": "Germany", "away": "Ecuador", "neutral": 1, "p_home": 0.2200402170419693, "p_draw": 0.5253347754478455, "p_away": 0.25462502241134644}, {"home": "Cura\u00e7ao", "away": "Ivory Coast", "neutral": 1, "p_home": 0.09704407304525375, "p_draw": 0.36869072914123535, "p_away": 0.5342652201652527}, {"home": "Cura\u00e7ao", "away": "Ecuador", "neutral": 1, "p_home": 0.06451777368783951, "p_draw": 0.20373734831809998, "p_away": 0.7317448258399963}, {"home": "Ivory Coast", "away": "Ecuador", "neutral": 1, "p_home": 0.2634716033935547, "p_draw": 0.3987494111061096, "p_away": 0.3377789258956909}]}, "F": {"group": "F", "teams": ["Netherlands", "Japan", "Sweden", "Tunisia"], "standings": ["Netherlands", "Japan", "Tunisia", "Sweden"], "points": {"Netherlands": 6.261, "Japan": 6.009, "Sweden": 1.439, "Tunisia": 2.904}, "gf": {"Netherlands": 7.331, "Japan": 4.562, "Sweden": 2.432, "Tunisia": 2.393}, "ga": {"Netherlands": 2.807, "Japan": 3.602, "Sweden": 5.375, "Tunisia": 4.932}, "matches": [{"home": "Netherlands", "away": "Japan", "neutral": 1, "p_home": 0.36666548252105713, "p_draw": 0.22844582796096802, "p_away": 0.40488874912261963}, {"home": "Netherlands", "away": "Sweden", "neutral": 1, "p_home": 0.8213993310928345, "p_draw": 0.16442987322807312, "p_away": 0.014170805923640728}, {"home": "Netherlands", "away": "Tunisia", "neutral": 1, "p_home": 0.6991613507270813, "p_draw": 0.20603370666503906, "p_away": 0.09480489790439606}, {"home": "Japan", "away": "Sweden", "neutral": 1, "p_home": 0.8237996101379395, "p_draw": 0.1333460807800293, "p_away": 0.042854275554418564}, {"home": "Japan", "away": "Tunisia", "neutral": 1, "p_home": 0.5732839107513428, "p_draw": 0.24176940321922302, "p_away": 0.18494673073291779}, {"home": "Sweden", "away": "Tunisia", "neutral": 1, "p_home": 0.18544891476631165, "p_draw": 0.413419246673584, "p_away": 0.401131808757782}]}, "G": {"group": "G", "teams": ["Belgium", "Egypt", "Iran", "New Zealand"], "standings": ["Iran", "Egypt", "Belgium", "New Zealand"], "points": {"Belgium": 4.356, "Egypt": 4.507, "Iran": 6.104, "New Zealand": 1.721}, "gf": {"Belgium": 7.433, "Egypt": 2.954, "Iran": 4.132, "New Zealand": 1.511}, "ga": {"Belgium": 2.862, "Egypt": 4.057, "Iran": 3.57, "New Zealand": 5.543}, "matches": [{"home": "Belgium", "away": "Egypt", "neutral": 1, "p_home": 0.30375921726226807, "p_draw": 0.30627158284187317, "p_away": 0.38996922969818115}, {"home": "Belgium", "away": "Iran", "neutral": 1, "p_home": 0.2463354766368866, "p_draw": 0.1250966191291809, "p_away": 0.6285679340362549}, {"home": "Belgium", "away": "New Zealand", "neutral": 1, "p_home": 0.6975077986717224, "p_draw": 0.1815682053565979, "p_away": 0.12092404812574387}, {"home": "Egypt", "away": "Iran", "neutral": 1, "p_home": 0.2844705879688263, "p_draw": 0.23589091002941132, "p_away": 0.4796385169029236}, {"home": "Egypt", "away": "New Zealand", "neutral": 1, "p_home": 0.5455693602561951, "p_draw": 0.3044375479221344, "p_away": 0.14999306201934814}, {"home": "Iran", "away": "New Zealand", "neutral": 1, "p_home": 0.7529085278511047, "p_draw": 0.1595379263162613, "p_away": 0.08755355328321457}]}, "H": {"group": "H", "teams": ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"], "standings": ["Spain", "Uruguay", "Cape Verde", "Saudi Arabia"], "points": {"Spain": 8.047, "Cape Verde": 2.019, "Saudi Arabia": 1.774, "Uruguay": 5.132}, "gf": {"Spain": 8.618, "Cape Verde": 2.931, "Saudi Arabia": 1.712, "Uruguay": 2.271}, "ga": {"Spain": 1.891, "Cape Verde": 4.393, "Saudi Arabia": 5.014, "Uruguay": 4.233}, "matches": [{"home": "Spain", "away": "Cape Verde", "neutral": 1, "p_home": 0.8617230653762817, "p_draw": 0.1244133710861206, "p_away": 0.01386354025453329}, {"home": "Spain", "away": "Saudi Arabia", "neutral": 1, "p_home": 0.9038208723068237, "p_draw": 0.09388203173875809, "p_away": 0.0022971252910792828}, {"home": "Spain", "away": "Uruguay", "neutral": 1, "p_home": 0.7943896055221558, "p_draw": 0.14937904477119446, "p_away": 0.05623131990432739}, {"home": "Cape Verde", "away": "Saudi Arabia", "neutral": 1, "p_home": 0.36633890867233276, "p_draw": 0.3004072308540344, "p_away": 0.3332538604736328}, {"home": "Cape Verde", "away": "Uruguay", "neutral": 1, "p_home": 0.06795056164264679, "p_draw": 0.2501969635486603, "p_away": 0.6818524599075317}, {"home": "Saudi Arabia", "away": "Uruguay", "neutral": 1, "p_home": 0.0883287563920021, "p_draw": 0.1084958091378212, "p_away": 0.8031753897666931}]}, "I": {"group": "I", "teams": ["France", "Senegal", "Iraq", "Norway"], "standings": ["France", "Senegal", "Norway", "Iraq"], "points": {"France": 6.491, "Senegal": 4.308, "Iraq": 2.707, "Norway": 2.905}, "gf": {"France": 6.649, "Senegal": 3.941, "Iraq": 2.022, "Norway": 5.672}, "ga": {"France": 3.452, "Senegal": 4.634, "Iraq": 5.961, "Norway": 4.239}, "matches": [{"home": "France", "away": "Senegal", "neutral": 1, "p_home": 0.586580216884613, "p_draw": 0.20931129157543182, "p_away": 0.20410847663879395}, {"home": "France", "away": "Iraq", "neutral": 1, "p_home": 0.8141682147979736, "p_draw": 0.15211573243141174, "p_away": 0.03371604532003403}, {"home": "France", "away": "Norway", "neutral": 1, "p_home": 0.5246676802635193, "p_draw": 0.35313287377357483, "p_away": 0.12219943851232529}, {"home": "Senegal", "away": "Iraq", "neutral": 1, "p_home": 0.46628299355506897, "p_draw": 0.3018241822719574, "p_away": 0.23189286887645721}, {"home": "Senegal", "away": "Norway", "neutral": 1, "p_home": 0.47817862033843994, "p_draw": 0.3512841463088989, "p_away": 0.17053727805614471}, {"home": "Iraq", "away": "Norway", "neutral": 1, "p_home": 0.4115493595600128, "p_draw": 0.22163105010986328, "p_away": 0.3668196201324463}]}, "J": {"group": "J", "teams": ["Argentina", "Algeria", "Austria", "Jordan"], "standings": ["Argentina", "Algeria", "Austria", "Jordan"], "points": {"Argentina": 6.118, "Algeria": 4.593, "Austria": 3.101, "Jordan": 2.704}, "gf": {"Argentina": 5.997, "Algeria": 4.925, "Austria": 5.096, "Jordan": 3.477}, "ga": {"Argentina": 4.002, "Algeria": 4.714, "Austria": 5.024, "Jordan": 5.755}, "matches": [{"home": "Argentina", "away": "Algeria", "neutral": 1, "p_home": 0.5477517247200012, "p_draw": 0.31718817353248596, "p_away": 0.1350601613521576}, {"home": "Argentina", "away": "Austria", "neutral": 1, "p_home": 0.5968319773674011, "p_draw": 0.22420594096183777, "p_away": 0.17896203696727753}, {"home": "Argentina", "away": "Jordan", "neutral": 1, "p_home": 0.6532488465309143, "p_draw": 0.1831229031085968, "p_away": 0.16362828016281128}, {"home": "Algeria", "away": "Austria", "neutral": 1, "p_home": 0.5914385914802551, "p_draw": 0.21905046701431274, "p_away": 0.18951094150543213}, {"home": "Algeria", "away": "Jordan", "neutral": 1, "p_home": 0.5563772916793823, "p_draw": 0.2081979364156723, "p_away": 0.23542478680610657}, {"home": "Austria", "away": "Jordan", "neutral": 1, "p_home": 0.40635770559310913, "p_draw": 0.33285823464393616, "p_away": 0.26078400015830994}]}, "K": {"group": "K", "teams": ["Portugal", "DR Congo", "Uzbekistan", "Colombia"], "standings": ["Colombia", "Portugal", "Uzbekistan", "DR Congo"], "points": {"Portugal": 4.713, "DR Congo": 3.346, "Uzbekistan": 3.653, "Colombia": 4.866}, "gf": {"Portugal": 5.584, "DR Congo": 2.308, "Uzbekistan": 2.582, "Colombia": 5.357}, "ga": {"Portugal": 3.274, "DR Congo": 4.578, "Uzbekistan": 4.524, "Colombia": 3.455}, "matches": [{"home": "Portugal", "away": "DR Congo", "neutral": 1, "p_home": 0.4596119821071625, "p_draw": 0.3832049071788788, "p_away": 0.15718308091163635}, {"home": "Portugal", "away": "Uzbekistan", "neutral": 1, "p_home": 0.4754103422164917, "p_draw": 0.28025469183921814, "p_away": 0.24433499574661255}, {"home": "Portugal", "away": "Colombia", "neutral": 1, "p_home": 0.3601696491241455, "p_draw": 0.1642562448978424, "p_away": 0.4755740463733673}, {"home": "DR Congo", "away": "Uzbekistan", "neutral": 1, "p_home": 0.28969672322273254, "p_draw": 0.28464019298553467, "p_away": 0.4256630539894104}, {"home": "DR Congo", "away": "Colombia", "neutral": 1, "p_home": 0.3995897173881531, "p_draw": 0.13894155621528625, "p_away": 0.4614686667919159}, {"home": "Uzbekistan", "away": "Colombia", "neutral": 1, "p_home": 0.3025594651699066, "p_draw": 0.17037712037563324, "p_away": 0.5270634293556213}]}, "L": {"group": "L", "teams": ["England", "Croatia", "Ghana", "Panama"], "standings": ["England", "Croatia", "Panama", "Ghana"], "points": {"England": 6.613, "Croatia": 5.566, "Ghana": 1.214, "Panama": 3.638}, "gf": {"England": 5.589, "Croatia": 6.802, "Ghana": 2.269, "Panama": 3.015}, "ga": {"England": 3.537, "Croatia": 3.347, "Ghana": 5.857, "Panama": 4.933}, "matches": [{"home": "England", "away": "Croatia", "neutral": 1, "p_home": 0.5354251861572266, "p_draw": 0.13700035214424133, "p_away": 0.3275744616985321}, {"home": "England", "away": "Ghana", "neutral": 1, "p_home": 0.8377023339271545, "p_draw": 0.10255412012338638, "p_away": 0.05974351987242699}, {"home": "England", "away": "Panama", "neutral": 1, "p_home": 0.7073637843132019, "p_draw": 0.13243994116783142, "p_away": 0.1601962447166443}, {"home": "Croatia", "away": "Ghana", "neutral": 1, "p_home": 0.80446457862854, "p_draw": 0.14974826574325562, "p_away": 0.04578722268342972}, {"home": "Croatia", "away": "Panama", "neutral": 1, "p_home": 0.5589377284049988, "p_draw": 0.20643047988414764, "p_away": 0.23463180661201477}, {"home": "Ghana", "away": "Panama", "neutral": 1, "p_home": 0.1352323293685913, "p_draw": 0.23964855074882507, "p_away": 0.6251190900802612}]}}}, "qsvm": {"model": "qsvm", "champion": "England", "rounds": [{"round": "Round of 32", "winners": ["Germany", "France", "Switzerland", "Netherlands", "England", "Spain", "Turkey", "Belgium", "Brazil", "Norway", "Mexico", "Croatia", "Algeria", "United States", "Egypt", "Portugal"], "matches": [{"round": "Round of 32", "team_a": "Germany", "team_b": "Qatar", "p_a": 0.5759016546245834, "p_b": 0.4240983453754167, "winner": "Germany", "p_winner": 0.5759016546245834, "match_no": 74}, {"round": "Round of 32", "team_a": "France", "team_b": "Uruguay", "p_a": 0.5133344413273511, "p_b": 0.48666555867264893, "winner": "France", "p_winner": 0.5133344413273511, "match_no": 77}, {"round": "Round of 32", "team_a": "South Korea", "team_b": "Switzerland", "p_a": 0.49556237030994993, "p_b": 0.50443762969005, "winner": "Switzerland", "p_winner": 0.50443762969005, "match_no": 73}, {"round": "Round of 32", "team_a": "Netherlands", "team_b": "Morocco", "p_a": 0.5268220647077119, "p_b": 0.4731779352922881, "winner": "Netherlands", "p_winner": 0.5268220647077119, "match_no": 75}, {"round": "Round of 32", "team_a": "DR Congo", "team_b": "England", "p_a": 0.49823258309311486, "p_b": 0.5017674169068852, "winner": "England", "p_winner": 0.5017674169068852, "match_no": 83}, {"round": "Round of 32", "team_a": "Spain", "team_b": "Argentina", "p_a": 0.5343065643540776, "p_b": 0.4656934356459224, "winner": "Spain", "p_winner": 0.5343065643540776, "match_no": 84}, {"round": "Round of 32", "team_a": "Turkey", "team_b": "Austria", "p_a": 0.5504971925110813, "p_b": 0.44950280748891874, "winner": "Turkey", "p_winner": 0.5504971925110813, "match_no": 81}, {"round": "Round of 32", "team_a": "Belgium", "team_b": "Czech Republic", "p_a": 0.5388372349659442, "p_b": 0.4611627650340559, "winner": "Belgium", "p_winner": 0.5388372349659442, "match_no": 82}, {"round": "Round of 32", "team_a": "Brazil", "team_b": "Tunisia", "p_a": 0.5721356404427457, "p_b": 0.42786435955725427, "winner": "Brazil", "p_winner": 0.5721356404427457, "match_no": 76}, {"round": "Round of 32", "team_a": "Ivory Coast", "team_b": "Norway", "p_a": 0.4650713670853913, "p_b": 0.5349286329146088, "winner": "Norway", "p_winner": 0.5349286329146088, "match_no": 78}, {"round": "Round of 32", "team_a": "Mexico", "team_b": "Cura\u00e7ao", "p_a": 0.5664371594835376, "p_b": 0.4335628405164625, "winner": "Mexico", "p_winner": 0.5664371594835376, "match_no": 79}, {"round": "Round of 32", "team_a": "Croatia", "team_b": "Colombia", "p_a": 0.5404066897973504, "p_b": 0.45959331020264965, "winner": "Croatia", "p_winner": 0.5404066897973504, "match_no": 80}, {"round": "Round of 32", "team_a": "Algeria", "team_b": "Saudi Arabia", "p_a": 0.5658114345504945, "p_b": 0.43418856544950546, "winner": "Algeria", "p_winner": 0.5658114345504945, "match_no": 86}, {"round": "Round of 32", "team_a": "United States", "team_b": "Iran", "p_a": 0.5749433552747544, "p_b": 0.4250566447252456, "winner": "United States", "p_winner": 0.5749433552747544, "match_no": 88}, {"round": "Round of 32", "team_a": "Canada", "team_b": "Egypt", "p_a": 0.4660429865743972, "p_b": 0.5339570134256029, "winner": "Egypt", "p_winner": 0.5339570134256029, "match_no": 85}, {"round": "Round of 32", "team_a": "Portugal", "team_b": "Senegal", "p_a": 0.5238103995681453, "p_b": 0.47618960043185465, "winner": "Portugal", "p_winner": 0.5238103995681453, "match_no": 87}], "qaoa_objective": 9.840395978997531}, {"round": "Round of 16", "winners": ["France", "Netherlands", "England", "Belgium", "Brazil", "Croatia", "Algeria", "Portugal"], "matches": [{"round": "Round of 16", "team_a": "Germany", "team_b": "France", "p_a": 0.4779406300602194, "p_b": 0.5220593699397806, "winner": "France", "p_winner": 0.5220593699397806, "match_no": 89}, {"round": "Round of 16", "team_a": "Switzerland", "team_b": "Netherlands", "p_a": 0.4887238791507453, "p_b": 0.5112761208492548, "winner": "Netherlands", "p_winner": 0.5112761208492548, "match_no": 90}, {"round": "Round of 16", "team_a": "England", "team_b": "Spain", "p_a": 0.5146220083843388, "p_b": 0.48537799161566125, "winner": "England", "p_winner": 0.5146220083843388, "match_no": 93}, {"round": "Round of 16", "team_a": "Turkey", "team_b": "Belgium", "p_a": 0.46109526264302814, "p_b": 0.538904737356972, "winner": "Belgium", "p_winner": 0.538904737356972, "match_no": 94}, {"round": "Round of 16", "team_a": "Brazil", "team_b": "Norway", "p_a": 0.5404457045721425, "p_b": 0.45955429542785753, "winner": "Brazil", "p_winner": 0.5404457045721425, "match_no": 91}, {"round": "Round of 16", "team_a": "Mexico", "team_b": "Croatia", "p_a": 0.444521706115129, "p_b": 0.5554782938848711, "winner": "Croatia", "p_winner": 0.5554782938848711, "match_no": 92}, {"round": "Round of 16", "team_a": "Algeria", "team_b": "United States", "p_a": 0.6004585641323644, "p_b": 0.3995414358676356, "winner": "Algeria", "p_winner": 0.6004585641323644, "match_no": 95}, {"round": "Round of 16", "team_a": "Egypt", "team_b": "Portugal", "p_a": 0.4753303855769008, "p_b": 0.5246696144230991, "winner": "Portugal", "p_winner": 0.5246696144230991, "match_no": 96}], "qaoa_objective": 4.936693527322492}, {"round": "Quarter-finals", "winners": ["France", "England", "Croatia", "Algeria"], "matches": [{"round": "Quarter-finals", "team_a": "France", "team_b": "Netherlands", "p_a": 0.5095343561833929, "p_b": 0.4904656438166072, "winner": "France", "p_winner": 0.5095343561833929, "match_no": 97}, {"round": "Quarter-finals", "team_a": "England", "team_b": "Belgium", "p_a": 0.5196430595666633, "p_b": 0.4803569404333367, "winner": "England", "p_winner": 0.5196430595666633, "match_no": 98}, {"round": "Quarter-finals", "team_a": "Brazil", "team_b": "Croatia", "p_a": 0.463016021581575, "p_b": 0.536983978418425, "winner": "Croatia", "p_winner": 0.536983978418425, "match_no": 99}, {"round": "Quarter-finals", "team_a": "Algeria", "team_b": "Portugal", "p_a": 0.5258975763762246, "p_b": 0.4741024236237754, "winner": "Algeria", "p_winner": 0.5258975763762246, "match_no": 100}], "qaoa_objective": 2.593306951621112}, {"round": "Semi-finals", "winners": ["England", "Croatia"], "matches": [{"round": "Semi-finals", "team_a": "France", "team_b": "England", "p_a": 0.5032804909726313, "p_b": 0.49671950902736867, "winner": "England", "p_winner": 0.49671950902736867, "match_no": 101}, {"round": "Semi-finals", "team_a": "Croatia", "team_b": "Algeria", "p_a": 0.5157819664506441, "p_b": 0.4842180335493559, "winner": "Croatia", "p_winner": 0.5157819664506441, "match_no": 102}], "qaoa_objective": 1.3493009287917723}, {"round": "Final", "winners": ["England"], "matches": [{"round": "Final", "team_a": "England", "team_b": "Croatia", "p_a": 0.5203699942645258, "p_b": 0.4796300057354742, "winner": "England", "p_winner": 0.5203699942645258, "match_no": 104}], "qaoa_objective": 0.6532151929905154}], "qualified": [["Mexico", "A", 1], ["South Korea", "A", 2], ["Canada", "B", 1], ["Switzerland", "B", 2], ["Brazil", "C", 1], ["Morocco", "C", 2], ["Turkey", "D", 1], ["United States", "D", 2], ["Germany", "E", 1], ["Ivory Coast", "E", 2], ["Netherlands", "F", 1], ["Tunisia", "F", 2], ["Belgium", "G", 1], ["Iran", "G", 2], ["Spain", "H", 1], ["Saudi Arabia", "H", 2], ["France", "I", 1], ["Norway", "I", 2], ["Algeria", "J", 1], ["Argentina", "J", 2], ["Portugal", "K", 1], ["DR Congo", "K", 2], ["Croatia", "L", 1], ["England", "L", 2], ["Austria", "J", 3], ["Qatar", "B", 3], ["Uruguay", "H", 3], ["Cura\u00e7ao", "E", 3], ["Senegal", "I", 3], ["Colombia", "K", 3], ["Czech Republic", "A", 3], ["Egypt", "G", 3]], "groups": {"A": {"group": "A", "teams": ["Mexico", "South Africa", "South Korea", "Czech Republic"], "standings": ["Mexico", "South Korea", "Czech Republic", "South Africa"], "points": {"Mexico": 4.521, "South Africa": 3.47, "South Korea": 4.026, "Czech Republic": 3.79}, "gf": {"Mexico": 2.536, "South Africa": 2.631, "South Korea": 3.546, "Czech Republic": 3.492}, "ga": {"Mexico": 3.282, "South Africa": 3.208, "South Korea": 2.823, "Czech Republic": 2.894}, "matches": [{"home": "Mexico", "away": "South Africa", "neutral": 0, "p_home": 0.45336534291417213, "p_draw": 0.2581926807648343, "p_away": 0.2884419763209936}, {"home": "Mexico", "away": "South Korea", "neutral": 0, "p_home": 0.3204713175432579, "p_draw": 0.31592459934807604, "p_away": 0.36360408310866593}, {"home": "Mexico", "away": "Czech Republic", "neutral": 0, "p_home": 0.4531943849819032, "p_draw": 0.26548635735826065, "p_away": 0.28131925765983634}, {"home": "South Africa", "away": "South Korea", "neutral": 1, "p_home": 0.2540084134749152, "p_draw": 0.4690570600889252, "p_away": 0.2769345264361592}, {"home": "South Africa", "away": "Czech Republic", "neutral": 1, "p_home": 0.21668716336950916, "p_draw": 0.465165283005855, "p_away": 0.3181475536246357}, {"home": "South Korea", "away": "Czech Republic", "neutral": 1, "p_home": 0.29993054539345154, "p_draw": 0.4195531782713583, "p_away": 0.28051627633519}]}, "B": {"group": "B", "teams": ["Canada", "Bosnia and Herzegovina", "Qatar", "Switzerland"], "standings": ["Canada", "Switzerland", "Qatar", "Bosnia and Herzegovina"], "points": {"Canada": 4.409, "Bosnia and Herzegovina": 3.513, "Qatar": 4.027, "Switzerland": 4.059}, "gf": {"Canada": 2.283, "Bosnia and Herzegovina": 3.849, "Qatar": 1.82, "Switzerland": 4.954}, "ga": {"Canada": 3.511, "Bosnia and Herzegovina": 3.029, "Qatar": 3.835, "Switzerland": 2.532}, "matches": [{"home": "Canada", "away": "Bosnia and Herzegovina", "neutral": 0, "p_home": 0.5381525698925126, "p_draw": 0.20100269031578533, "p_away": 0.2608447397917021}, {"home": "Canada", "away": "Qatar", "neutral": 0, "p_home": 0.28135635048099206, "p_draw": 0.41925420808833314, "p_away": 0.29938944143067464}, {"home": "Canada", "away": "Switzerland", "neutral": 0, "p_home": 0.3311537349510147, "p_draw": 0.33686280870897195, "p_away": 0.3319834563400133}, {"home": "Bosnia and Herzegovina", "away": "Qatar", "neutral": 1, "p_home": 0.38991367051460346, "p_draw": 0.20152297119755058, "p_away": 0.4085633582878462}, {"home": "Bosnia and Herzegovina", "away": "Switzerland", "neutral": 1, "p_home": 0.1985078994514918, "p_draw": 0.5624860512340758, "p_away": 0.2390060493144326}, {"home": "Qatar", "away": "Switzerland", "neutral": 1, "p_home": 0.3372857508617466, "p_draw": 0.2707001613141592, "p_away": 0.3920140878240942}]}, "C": {"group": "C", "teams": ["Brazil", "Morocco", "Haiti", "Scotland"], "standings": ["Brazil", "Morocco", "Haiti", "Scotland"], "points": {"Brazil": 4.275, "Morocco": 3.985, "Haiti": 3.724, "Scotland": 3.693}, "gf": {"Brazil": 4.889, "Morocco": 3.904, "Haiti": 2.303, "Scotland": 4.056}, "ga": {"Brazil": 3.424, "Morocco": 3.634, "Haiti": 4.293, "Scotland": 3.8}, "matches": [{"home": "Brazil", "away": "Morocco", "neutral": 1, "p_home": 0.2734633936718458, "p_draw": 0.4385687972654224, "p_away": 0.28796780906273184}, {"home": "Brazil", "away": "Haiti", "neutral": 1, "p_home": 0.3914842972059259, "p_draw": 0.3232542615919589, "p_away": 0.28526144120211533}, {"home": "Brazil", "away": "Scotland", "neutral": 1, "p_home": 0.4089966783651737, "p_draw": 0.29141213373414104, "p_away": 0.29959118790068534}, {"home": "Morocco", "away": "Haiti", "neutral": 1, "p_home": 0.2775546461601461, "p_draw": 0.4544452329669999, "p_away": 0.2680001208728539}, {"home": "Morocco", "away": "Scotland", "neutral": 1, "p_home": 0.33839148608698394, "p_draw": 0.3807115046327119, "p_away": 0.2808970092803042}, {"home": "Haiti", "away": "Scotland", "neutral": 1, "p_home": 0.2842727519303784, "p_draw": 0.43378369943948486, "p_away": 0.2819435486301367}]}, "D": {"group": "D", "teams": ["United States", "Paraguay", "Australia", "Turkey"], "standings": ["Turkey", "United States", "Paraguay", "Australia"], "points": {"United States": 4.014, "Paraguay": 3.709, "Australia": 3.68, "Turkey": 4.192}, "gf": {"United States": 3.602, "Paraguay": 1.919, "Australia": 2.664, "Turkey": 4.541}, "ga": {"United States": 3.144, "Paraguay": 3.62, "Australia": 3.359, "Turkey": 2.602}, "matches": [{"home": "United States", "away": "Paraguay", "neutral": 0, "p_home": 0.33778800927801095, "p_draw": 0.3206468858975424, "p_away": 0.3415651048244463}, {"home": "United States", "away": "Australia", "neutral": 0, "p_home": 0.38211095118176086, "p_draw": 0.3434975749442282, "p_away": 0.27439147387401114}, {"home": "United States", "away": "Turkey", "neutral": 0, "p_home": 0.28218884070206984, "p_draw": 0.3431189814979544, "p_away": 0.3746921777999758}, {"home": "Paraguay", "away": "Australia", "neutral": 1, "p_home": 0.2552784118103535, "p_draw": 0.3965117957511044, "p_away": 0.3482097924385422}, {"home": "Paraguay", "away": "Turkey", "neutral": 1, "p_home": 0.2406241429218353, "p_draw": 0.4790119147801002, "p_away": 0.2803639422980645}, {"home": "Australia", "away": "Turkey", "neutral": 1, "p_home": 0.1829809452147251, "p_draw": 0.5231727124904872, "p_away": 0.29384634229478734}]}, "E": {"group": "E", "teams": ["Germany", "Cura\u00e7ao", "Ivory Coast", "Ecuador"], "standings": ["Germany", "Ivory Coast", "Cura\u00e7ao", "Ecuador"], "points": {"Germany": 4.254, "Cura\u00e7ao": 3.892, "Ivory Coast": 4.004, "Ecuador": 3.753}, "gf": {"Germany": 5.321, "Cura\u00e7ao": 3.139, "Ivory Coast": 3.977, "Ecuador": 1.759}, "ga": {"Germany": 2.96, "Cura\u00e7ao": 3.633, "Ivory Coast": 3.375, "Ecuador": 4.228}, "matches": [{"home": "Germany", "away": "Cura\u00e7ao", "neutral": 1, "p_home": 0.3309703373271501, "p_draw": 0.35235605287309596, "p_away": 0.3166736097997539}, {"home": "Germany", "away": "Ivory Coast", "neutral": 1, "p_home": 0.3477392384611425, "p_draw": 0.32610530386973957, "p_away": 0.326155457669118}, {"home": "Germany", "away": "Ecuador", "neutral": 1, "p_home": 0.4146581759995157, "p_draw": 0.29568996568540246, "p_away": 0.28965185831508183}, {"home": "Cura\u00e7ao", "away": "Ivory Coast", "neutral": 1, "p_home": 0.2927655885290696, "p_draw": 0.3944989234275511, "p_away": 0.31273548804337903}, {"home": "Cura\u00e7ao", "away": "Ecuador", "neutral": 1, "p_home": 0.3137472092255854, "p_draw": 0.3751875020620325, "p_away": 0.311065288712382}, {"home": "Ivory Coast", "away": "Ecuador", "neutral": 1, "p_home": 0.33763945709341653, "p_draw": 0.35375858385450243, "p_away": 0.30860195905208115}]}, "F": {"group": "F", "teams": ["Netherlands", "Japan", "Sweden", "Tunisia"], "standings": ["Netherlands", "Tunisia", "Japan", "Sweden"], "points": {"Netherlands": 4.676, "Japan": 3.652, "Sweden": 3.616, "Tunisia": 4.01}, "gf": {"Netherlands": 6.407, "Japan": 3.647, "Sweden": 2.904, "Tunisia": 2.581}, "ga": {"Netherlands": 3.035, "Japan": 3.921, "Sweden": 4.327, "Tunisia": 4.256}, "matches": [{"home": "Netherlands", "away": "Japan", "neutral": 1, "p_home": 0.3788394625858206, "p_draw": 0.2979508470673394, "p_away": 0.3232096903468398}, {"home": "Netherlands", "away": "Sweden", "neutral": 1, "p_home": 0.47585606875532865, "p_draw": 0.27139411297802296, "p_away": 0.25274981826664816}, {"home": "Netherlands", "away": "Tunisia", "neutral": 1, "p_home": 0.41660822367491107, "p_draw": 0.2928096369978313, "p_away": 0.2905821393272573}, {"home": "Japan", "away": "Sweden", "neutral": 1, "p_home": 0.29526947297604905, "p_draw": 0.38098064792070263, "p_away": 0.3237498791032485}, {"home": "Japan", "away": "Tunisia", "neutral": 1, "p_home": 0.2203351624984939, "p_draw": 0.4566646254929517, "p_away": 0.32300021200855455}, {"home": "Sweden", "away": "Tunisia", "neutral": 1, "p_home": 0.29586897850395466, "p_draw": 0.3464964517728337, "p_away": 0.3576345697232118}]}, "G": {"group": "G", "teams": ["Belgium", "Egypt", "Iran", "New Zealand"], "standings": ["Belgium", "Iran", "Egypt", "New Zealand"], "points": {"Belgium": 4.611, "Egypt": 3.784, "Iran": 4.083, "New Zealand": 3.45}, "gf": {"Belgium": 7.405, "Egypt": 2.724, "Iran": 3.39, "New Zealand": 1.718}, "ga": {"Belgium": 2.586, "Egypt": 4.171, "Iran": 3.872, "New Zealand": 4.608}, "matches": [{"home": "Belgium", "away": "Egypt", "neutral": 1, "p_home": 0.42967926943729445, "p_draw": 0.2882387150154647, "p_away": 0.2820820155472408}, {"home": "Belgium", "away": "Iran", "neutral": 1, "p_home": 0.3994323627542798, "p_draw": 0.2703695454599723, "p_away": 0.3301980917857476}, {"home": "Belgium", "away": "New Zealand", "neutral": 1, "p_home": 0.40252361778234713, "p_draw": 0.35783193465785224, "p_away": 0.23964444755980066}, {"home": "Egypt", "away": "Iran", "neutral": 1, "p_home": 0.2042310622642424, "p_draw": 0.5138727621596784, "p_away": 0.2818961755760792}, {"home": "Egypt", "away": "New Zealand", "neutral": 1, "p_home": 0.4052701025890366, "p_draw": 0.30711820700509085, "p_away": 0.28761169040587264}, {"home": "Iran", "away": "New Zealand", "neutral": 1, "p_home": 0.3758530739124595, "p_draw": 0.33464405631707406, "p_away": 0.28950286977046635}]}, "H": {"group": "H", "teams": ["Spain", "Cape Verde", "Saudi Arabia", "Uruguay"], "standings": ["Spain", "Saudi Arabia", "Uruguay", "Cape Verde"], "points": {"Spain": 4.218, "Cape Verde": 3.811, "Saudi Arabia": 4.092, "Uruguay": 3.97}, "gf": {"Spain": 6.314, "Cape Verde": 3.364, "Saudi Arabia": 2.048, "Uruguay": 1.982}, "ga": {"Spain": 2.427, "Cape Verde": 3.469, "Saudi Arabia": 4.002, "Uruguay": 3.811}, "matches": [{"home": "Spain", "away": "Cape Verde", "neutral": 1, "p_home": 0.3492919776174308, "p_draw": 0.3298668954835684, "p_away": 0.32084112689900074}, {"home": "Spain", "away": "Saudi Arabia", "neutral": 1, "p_home": 0.4052984312009836, "p_draw": 0.26929553585285804, "p_away": 0.32540603294615844}, {"home": "Spain", "away": "Uruguay", "neutral": 1, "p_home": 0.3188423082445692, "p_draw": 0.3987748141097732, "p_away": 0.2823828776456576}, {"home": "Cape Verde", "away": "Saudi Arabia", "neutral": 1, "p_home": 0.35884776050061507, "p_draw": 0.22950780416721475, "p_away": 0.41164443533217004}, {"home": "Cape Verde", "away": "Uruguay", "neutral": 1, "p_home": 0.2784321186910073, "p_draw": 0.377490646694564, "p_away": 0.34407723461442846}, {"home": "Saudi Arabia", "away": "Uruguay", "neutral": 1, "p_home": 0.35965688108232724, "p_draw": 0.30334294276917073, "p_away": 0.3370001761485021}]}, "I": {"group": "I", "teams": ["France", "Senegal", "Iraq", "Norway"], "standings": ["France", "Norway", "Senegal", "Iraq"], "points": {"France": 4.251, "Senegal": 3.836, "Iraq": 3.679, "Norway": 3.984}, "gf": {"France": 5.582, "Senegal": 3.697, "Iraq": 2.087, "Norway": 6.088}, "ga": {"France": 4.131, "Senegal": 4.546, "Iraq": 5.028, "Norway": 3.749}, "matches": [{"home": "France", "away": "Senegal", "neutral": 1, "p_home": 0.4223485835826415, "p_draw": 0.24485296496753928, "p_away": 0.33279845144981907}, {"home": "France", "away": "Iraq", "neutral": 1, "p_home": 0.3250435143227461, "p_draw": 0.37749584130642644, "p_away": 0.2974606443708276}, {"home": "France", "away": "Norway", "neutral": 1, "p_home": 0.3872555810509873, "p_draw": 0.22514525739817468, "p_away": 0.387599161550838}, {"home": "Senegal", "away": "Iraq", "neutral": 1, "p_home": 0.2834231467294766, "p_draw": 0.4275453153230533, "p_away": 0.28903153794747016}, {"home": "Senegal", "away": "Norway", "neutral": 1, "p_home": 0.2756788461648415, "p_draw": 0.4876910253676703, "p_away": 0.23663012846748832}, {"home": "Iraq", "away": "Norway", "neutral": 1, "p_home": 0.20870173262549618, "p_draw": 0.48791384454264985, "p_away": 0.3033844228318538}]}, "J": {"group": "J", "teams": ["Argentina", "Algeria", "Austria", "Jordan"], "standings": ["Algeria", "Argentina", "Austria", "Jordan"], "points": {"Argentina": 4.116, "Algeria": 4.269, "Austria": 4.115, "Jordan": 3.595}, "gf": {"Argentina": 5.044, "Algeria": 4.733, "Austria": 5.436, "Jordan": 3.721}, "ga": {"Argentina": 4.554, "Algeria": 4.707, "Austria": 4.388, "Jordan": 5.286}, "matches": [{"home": "Argentina", "away": "Algeria", "neutral": 1, "p_home": 0.36281777344721916, "p_draw": 0.32699719145912814, "p_away": 0.31018503509365236}, {"home": "Argentina", "away": "Austria", "neutral": 1, "p_home": 0.26439315643316735, "p_draw": 0.3996486066229239, "p_away": 0.3359582369439087}, {"home": "Argentina", "away": "Jordan", "neutral": 1, "p_home": 0.40830597617239783, "p_draw": 0.28267540676768, "p_away": 0.30901861705992206}, {"home": "Algeria", "away": "Austria", "neutral": 1, "p_home": 0.3333333333333333, "p_draw": 0.3333333333333333, "p_away": 0.3333333333333333}, {"home": "Algeria", "away": "Jordan", "neutral": 1, "p_home": 0.47227610423457594, "p_draw": 0.2614173302570339, "p_away": 0.2663065655083898}, {"home": "Austria", "away": "Jordan", "neutral": 1, "p_home": 0.3577160253236946, "p_draw": 0.30085757071825675, "p_away": 0.34142640395804846}]}, "K": {"group": "K", "teams": ["Portugal", "DR Congo", "Uzbekistan", "Colombia"], "standings": ["Portugal", "DR Congo", "Colombia", "Uzbekistan"], "points": {"Portugal": 4.46, "DR Congo": 4.024, "Uzbekistan": 3.621, "Colombia": 3.793}, "gf": {"Portugal": 5.419, "DR Congo": 2.4, "Uzbekistan": 2.49, "Colombia": 4.678}, "ga": {"Portugal": 3.166, "DR Congo": 4.174, "Uzbekistan": 4.184, "Colombia": 3.463}, "matches": [{"home": "Portugal", "away": "DR Congo", "neutral": 1, "p_home": 0.3531469507973029, "p_draw": 0.34707348612532196, "p_away": 0.2997795630773751}, {"home": "Portugal", "away": "Uzbekistan", "neutral": 1, "p_home": 0.3863051596874657, "p_draw": 0.33075680913285704, "p_away": 0.2829380311796771}, {"home": "Portugal", "away": "Colombia", "neutral": 1, "p_home": 0.4287297565882178, "p_draw": 0.2774408207851499, "p_away": 0.29382942262663236}, {"home": "DR Congo", "away": "Uzbekistan", "neutral": 1, "p_home": 0.3408218275847267, "p_draw": 0.32590253651664214, "p_away": 0.33327563589863124}, {"home": "DR Congo", "away": "Colombia", "neutral": 1, "p_home": 0.3599560068039673, "p_draw": 0.34982728394932644, "p_away": 0.290216709246706}, {"home": "Uzbekistan", "away": "Colombia", "neutral": 1, "p_home": 0.21478993033794042, "p_draw": 0.4710753783399549, "p_away": 0.3141346913221049}]}, "L": {"group": "L", "teams": ["England", "Croatia", "Ghana", "Panama"], "standings": ["Croatia", "England", "Panama", "Ghana"], "points": {"England": 4.405, "Croatia": 4.568, "Ghana": 3.58, "Panama": 3.703}, "gf": {"England": 4.571, "Croatia": 6.134, "Ghana": 2.735, "Panama": 2.972}, "ga": {"England": 3.79, "Croatia": 3.333, "Ghana": 4.659, "Panama": 4.631}, "matches": [{"home": "England", "away": "Croatia", "neutral": 1, "p_home": 0.36287183737549944, "p_draw": 0.3149963137780527, "p_away": 0.32213184884644785}, {"home": "England", "away": "Ghana", "neutral": 1, "p_home": 0.3833677356430913, "p_draw": 0.3048423897935814, "p_away": 0.3117898745633271}, {"home": "England", "away": "Panama", "neutral": 1, "p_home": 0.40940234190286345, "p_draw": 0.3183148712893118, "p_away": 0.27228278680782475}, {"home": "Croatia", "away": "Ghana", "neutral": 1, "p_home": 0.4265241188092326, "p_draw": 0.3094291934797797, "p_away": 0.2640466877109878}, {"home": "Croatia", "away": "Panama", "neutral": 1, "p_home": 0.4816184756067839, "p_draw": 0.2529499456902443, "p_away": 0.2654315787029718}, {"home": "Ghana", "away": "Panama", "neutral": 1, "p_home": 0.3316311429020474, "p_draw": 0.24322631230857908, "p_away": 0.4251425447893733}]}}}};
+
+function fmt(n, d=1) { return Number(n).toFixed(d); }
+function pct(p) { return Math.round(p * 100) + "%"; }
+
+function renderGroups(model) {
+  const groups = DATA[model].groups;
+  const container = document.getElementById("groups");
+  container.innerHTML = "";
+
+  // Rebuild qualified-third lookup so we can highlight the 8 best third-placers
+  // exactly as the seeding code does.
+  const thirds = [];
+  for (const g of Object.keys(groups).sort()) {
+    const res = groups[g];
+    const third = res.standings[2];
+    thirds.push({
+      team: third, group: g,
+      pts: res.points[third], gd: res.gf[third] - res.ga[third], gf: res.gf[third],
+    });
+  }
+  thirds.sort((a, b) => (b.pts - a.pts) || (b.gd - a.gd) || (b.gf - a.gf));
+  const qualifiedThirds = new Set(thirds.slice(0, 8).map(t => `${t.group}:${t.team}`));
+
+  for (const g of Object.keys(groups).sort()) {
+    const res = groups[g];
+    const card = document.createElement("div");
+    card.className = "group-card";
+    let rows = res.standings.map((team, idx) => {
+      const pts = res.points[team], gf = res.gf[team], ga = res.ga[team];
+      let cls = "";
+      if (idx === 0) cls = "seed-1";
+      else if (idx === 1) cls = "seed-2";
+      else if (idx === 2 && qualifiedThirds.has(`${g}:${team}`)) cls = "seed-3";
+      return `<tr class="${cls}">
+        <td>${team}</td>
+        <td class="num">${fmt(pts)}</td>
+        <td class="num">${fmt(gf)}</td>
+        <td class="num">${fmt(ga)}</td>
+        <td class="num">${fmt(gf - ga, 1)}</td>
+      </tr>`;
+    }).join("");
+
+    let matchRows = res.matches.map(m =>
+      `<tr><td>${m.home}</td><td class="num">${pct(m.p_home)}</td><td class="num">D ${pct(m.p_draw)}</td><td class="num">${pct(m.p_away)}</td><td>${m.away}</td></tr>`
+    ).join("");
+
+    card.innerHTML = `
+      <h3>Group ${g}</h3>
+      <table>
+        <thead><tr><th>Team</th><th class="num">xP</th><th class="num">xGF</th><th class="num">xGA</th><th class="num">xGD</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+      <details class="matches-detail">
+        <summary>Expected match probabilities</summary>
+        <table><tbody>${matchRows}</tbody></table>
+      </details>
+    `;
+    container.appendChild(card);
+  }
+  document.getElementById("groups-count").textContent =
+    `${Object.keys(groups).length} groups · 4 teams each · top 2 + 8 best 3rd advance`;
+}
+
+function renderThirds(model) {
+  const qualified = DATA[model].qualified;  // list of [team, group, seed]
+  const container = document.getElementById("thirds");
+  container.innerHTML = "";
+  const thirds = qualified.filter(q => q[2] === 3);
+  for (const [team, g] of thirds) {
+    const chip = document.createElement("div");
+    chip.className = "chip";
+    chip.innerHTML = `<span>${team}</span><span class="g">Grp ${g}</span>`;
+    container.appendChild(chip);
+  }
+}
+
+function renderBracket(model) {
+  const rounds = DATA[model].rounds;
+  const container = document.getElementById("bracket");
+  container.innerHTML = "";
+  for (const r of rounds) {
+    const col = document.createElement("div");
+    col.className = "round-col";
+    const header = document.createElement("h3");
+    header.textContent = r.round;
+    col.appendChild(header);
+    for (const m of r.matches) {
+      const match = document.createElement("div");
+      match.className = "match";
+      const aWin = m.winner === m.team_a;
+      const bWin = m.winner === m.team_b;
+      const mno = m.match_no ? `<div class="match-label">M${m.match_no}</div>` : '';
+      match.innerHTML = `
+        ${mno}
+        <div class="match-row ${aWin ? 'winner' : ''}">
+          <span>${m.team_a}</span>
+          <span class="prob">${aWin ? pct(m.p_winner) : ''}</span>
+        </div>
+        <div class="match-row ${bWin ? 'winner' : ''}">
+          <span>${m.team_b}</span>
+          <span class="prob">${bWin ? pct(m.p_winner) : ''}</span>
+        </div>
+      `;
+      col.appendChild(match);
+    }
+    container.appendChild(col);
+  }
+}
+
+function render(model) {
+  if (!DATA[model]) {
+    document.getElementById("champ").textContent = "(not available)";
+    document.getElementById("meta").textContent = `${model.toUpperCase()} JSON missing — rerun predict.py --model ${model}`;
+    document.getElementById("groups").innerHTML = "";
+    document.getElementById("thirds").innerHTML = "";
+    document.getElementById("bracket").innerHTML = "";
+    return;
+  }
+  document.getElementById("champ").textContent = DATA[model].champion;
+  document.getElementById("meta").textContent = `${model.toUpperCase()} match probabilities · QAOA knockout optimisation`;
+  renderGroups(model);
+  renderThirds(model);
+  renderBracket(model);
+}
+
+document.querySelectorAll(".tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    render(t.dataset.model);
+  });
+});
+
+render("xgb");
+</script>
+</body>
+</html>
