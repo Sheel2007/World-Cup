@@ -10,7 +10,6 @@
 [![Qiskit 1.4](https://img.shields.io/badge/Qiskit-1.4-6929C4?logo=qiskit&logoColor=white)](https://qiskit.org)
 [![XGBoost](https://img.shields.io/badge/XGBoost-classical%20baseline-EB6E2D)](https://xgboost.ai)
 [![QAOA](https://img.shields.io/badge/QAOA-bracket%20optimiser-9B59B6)](https://qiskit.org/ecosystem/optimization/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-22863A.svg)](#-license)
 
 </div>
 
@@ -131,13 +130,13 @@ You can also flip through the matplotlib bracket trees: [`docs/bracket_xgb.png`]
 
 ```mermaid
 flowchart TD
-    A[Raw match data<br/>8,000+ international games since 2018] --> B[14-dim feature vector per matchup<br/>ELO gap · form · goals · head-to-head · context]
-    B --> C[XGBoost<br/>classical baseline]
-    B --> D[QSVM<br/>6 qubits · quantum kernel]
-    C --> E[Match probabilities<br/>P(home), P(draw), P(away)]
+    A["Raw match data<br/>8,000+ international games since 2018"] --> B["14-dim feature vector per matchup<br/>ELO gap · form · goals · head-to-head · context"]
+    B --> C["XGBoost<br/>classical baseline"]
+    B --> D["QSVM<br/>6 qubits · quantum kernel"]
+    C --> E["Match probabilities<br/>P(home), P(draw), P(away)"]
     D --> E
-    E --> F[QAOA<br/>Quantum Approximate Optimisation Algorithm]
-    F --> G[Full simulated tournament<br/>Groups · R32 · R16 · QF · SF · Final]
+    E --> F["QAOA<br/>Quantum Approximate Optimisation Algorithm"]
+    F --> G["Full simulated tournament<br/>Groups · R32 · R16 · QF · SF · Final"]
 
     style D fill:#e3d4f5,stroke:#6929C4
     style F fill:#e3d4f5,stroke:#6929C4
