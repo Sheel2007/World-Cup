@@ -19,8 +19,8 @@
 
 <table>
 <tr>
-<th align="center" width="50%">Classical ML + Quantum Optimisation</th>
-<th align="center" width="50%">Pure Quantum ML + Quantum Optimisation</th>
+<th align="center" width="50%">Classical ML + Quantum Optimization</th>
+<th align="center" width="50%">Pure Quantum ML + Quantum Optimization</th>
 </tr>
 <tr>
 <td align="center">
@@ -64,7 +64,7 @@ The whole thing started when I sat down to fill out a 2026 World Cup bracket and
 
 $$2^{31} = 2{,}147{,}483{,}648 \text{ possible paths through the bracket.}$$
 
-**Over two billion brackets.** You can't enumerate them. You can't brute-force them. You have to *search* them intelligently — and that's exactly the kind of problem quantum computers were built for. Combinatorial optimisation is where algorithms like **QAOA** earn their living, and it's the reason Goldman Sachs, BMW, and Volkswagen all have quantum-optimisation teams working on logistics and finance.
+**Over two billion brackets.** You can't enumerate them. You can't brute-force them. You have to *search* them intelligently — and that's exactly the kind of problem quantum computers were built for. Combinatorial optimization is where algorithms like **QAOA** earn their living, and it's the reason Goldman Sachs, BMW, and Volkswagen all have quantum-optimization teams working on logistics and finance.
 
 So curiosity took over. Could a quantum computer actually pick the World Cup?
 
@@ -80,18 +80,18 @@ It's a known result in the quantum ML literature — quantum kernels often under
 
 ### ⚛️ Attempt 2 — Hybrid, use each tool for what it's good at
 
-Quantum machine learning struggled. Quantum optimisation didn't. The fix was obvious: stop forcing quantum to do everything.
+Quantum machine learning struggled. Quantum optimization didn't. The fix was obvious: stop forcing quantum to do everything.
 
 | Step | Who does it | Why |
 |---|---|---|
 | **Predict each match** | XGBoost (classical ML) | Tabular data is classical ML's home turf. **57.5%** accuracy on the 2025 holdout — almost **15 points** above the quantum predictor. |
-| **Pick the bracket** | QAOA (quantum optimisation) | Searching through 65,536 R32 winner-combinations is combinatorial — quantum's home turf. |
+| **Pick the bracket** | QAOA (quantum optimization) | Searching through 65,536 R32 winner-combinations is combinatorial — quantum's home turf. |
 
 The hybrid system picks **🇪🇸 Spain over 🇦🇷 Argentina** with **81%** confidence in the final.
 
 <div align="center">
 
-> ### *Classical ML predicts each match. Quantum optimisation picks the bracket.*
+> ### *Classical ML predicts each match. Quantum optimization picks the bracket.*
 
 </div>
 
@@ -135,7 +135,7 @@ flowchart TD
     B --> D["QSVM<br/>6 qubits · quantum kernel"]
     C --> E["Match probabilities<br/>P(home), P(draw), P(away)"]
     D --> E
-    E --> F["QAOA<br/>Quantum Approximate Optimisation Algorithm"]
+    E --> F["QAOA<br/>Quantum Approximate Optimization Algorithm"]
     F --> G["Full simulated tournament<br/>Groups · R32 · R16 · QF · SF · Final"]
 
     style D fill:#6929C4,stroke:#4B1A8C,color:#ffffff
@@ -151,7 +151,7 @@ flowchart TD
 - **XGBoost** — gradient-boosting decision trees. The workhorse of modern tabular ML.
 - **QSVM** — encodes each team's features into a 6-qubit quantum state, then measures the similarity between states using a real quantum kernel.
 
-**QAOA — the bracket strategist.** Once the predictor has spat out odds for every possible match, QAOA looks at *all 16 Round-of-32 matches simultaneously* and picks the single combination of winners that makes the entire round most probable. It does this by encoding the round as a QUBO (Quadratic Unconstrained Binary Optimisation) problem and minimising it with a real quantum algorithm on a Qiskit Aer simulator. Then it does the same for the Round of 16, quarter-finals, semi-finals, and final.
+**QAOA — the bracket strategist.** Once the predictor has spat out odds for every possible match, QAOA looks at *all 16 Round-of-32 matches simultaneously* and picks the single combination of winners that makes the entire round most probable. It does this by encoding the round as a QUBO (Quadratic Unconstrained Binary Optimization) problem and minimising it with a real quantum algorithm on a Qiskit Aer simulator. Then it does the same for the Round of 16, quarter-finals, semi-finals, and final.
 
 ### The 14 features in human terms
 
@@ -185,7 +185,7 @@ Evaluated on **987 international matches from 2025** held out from training:
 
 </div>
 
-Pure quantum machine learning lost. Classical ML still wipes the floor with quantum on this kind of small-scale tabular data. The hybrid setup (classical ML + QAOA) is where quantum actually earns its keep — bracket optimisation is genuinely combinatorial, and that's quantum's home turf.
+Pure quantum machine learning lost. Classical ML still wipes the floor with quantum on this kind of small-scale tabular data. The hybrid setup (classical ML + QAOA) is where quantum actually earns its keep — bracket optimization is genuinely combinatorial, and that's quantum's home turf.
 
 ---
 
@@ -251,7 +251,7 @@ models/
   data_loader.py               # train/test split by date
 bracket/
   group_stage.py               # round-robin group simulation
-  qaoa_optimizer.py            # QAOA per round, COBYLA optimiser on Aer
+  qaoa_optimizer.py            # QAOA per round, COBYLA optimizer on Aer
   runner.py                    # FIFA M73→M104 match tree + 3rd-place assignment
   visualize.py                 # matplotlib bracket-tree renderer
 web/
@@ -284,7 +284,7 @@ Training subsamples to **400 stratified examples** to keep kernel computation tr
 </details>
 
 <details>
-<summary><b>What's actually happening inside the QAOA bracket optimiser?</b></summary>
+<summary><b>What's actually happening inside the QAOA bracket optimizer?</b></summary>
 
 Each knockout round becomes a **QUBO** over binary variables (one per match, `x_i = 1` ↔ team A wins).
 
